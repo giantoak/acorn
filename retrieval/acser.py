@@ -19,6 +19,8 @@ class Acser(object):
     """
     A converter from ambiguous place names to FIPS codes.
     """
+    acs3 = 'acs2012_3yr'
+    acs1 = 'acs2013_1yr'
     def __init__(self):
         # connect to ACS database
         self.conn = psycopg2.connect('dbname={} user={}'.format(dbname, user))
@@ -56,8 +58,8 @@ class Acser(object):
 
         return results
     
-    def retrieve_within_table(self, geo, table, cols, verbose=False):
-        qbase = 'SELECT {} FROM acs2013_1yr.{} WHERE geoid=%s'
+    def retrieve_within_table(self, geo, table, cols, verbose=False, schema=acs3):
+        qbase = 'SELECT {q} FROM {schema}.{table} WHERE geoid=%s'
         
         # TODO: need validation on this. way open to injection
         # however, psycopg2 interpolation only works on values, not table or
@@ -68,7 +70,9 @@ class Acser(object):
 
         # assert SELECT * FROM information_schema.tables WHERE table_schema='acs2013_1yr';
 
-        query = qbase.format('{},'*(len(cols)-1) + '{}', table).format(*cols)
+        query = qbase.format(q='{},'*(len(cols)-1) + '{}',
+                schema = schema,
+                table = table).format(*cols)
         
         if verbose:
             print(query)
@@ -81,9 +85,23 @@ class Acser(object):
 
         return data
 
-    def geo_lookup(self, statefp, countyfp, placefp):
-        qbase = 'SELECT geoid FROM acs2013_1yr.geoheader WHERE {p1} AND {p2} AND {p3}'
+    def geo_lookup(self, statefp, countyfp, placefp, schema=None):
+        """
+        look up the census geo_id for a given FIPS code.
+
+        schema is an argument for forcing lookup to happen 
+        within a specific schema.
+        by default, it will use the acs 3-year geoheaders.
+
+        Note: in the near future, this may change to being
+        5-year geoheaders.
+
+        """
         
+        qbase = 'SELECT geoid FROM {schema}.geoheader WHERE {p1} AND {p2} AND {p3}'
+        
+        if not schema:
+            schema = self.acs3
 
         # construct the query and the args:
         args = []
@@ -95,7 +113,10 @@ class Acser(object):
         else:
             p1='state IS NULL'
 
-        # only use the county if there is no place-level information
+        #sometimes a name resolves to both a county and a place
+        # in those situations, go with the more specific level,
+        # unless otherwise specified
+        # TODO: build flag to force level of specificity
         if (countyfp and not placefp):
 
             p2='county=%s' 
@@ -110,7 +131,7 @@ class Acser(object):
         else:
             p3='place IS NULL'
 
-        query = qbase.format(p1=p1, p2=p2, p3=p3)
+        query = qbase.format(schema=schema, p1=p1, p2=p2, p3=p3)
         try:
             self.cur.execute(query, args)
         except (InternalError, ProgrammingError) as e:

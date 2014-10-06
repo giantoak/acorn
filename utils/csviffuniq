@@ -1,0 +1,17 @@
+#!/usr/bin/python
+
+# csviffuniq: usage: cat document.csv | csviffuniq 'col'
+# filters a csv file down to the rows where col are unique
+# rows with duplicate entries are discarded
+
+import pandas as pd
+import sys
+
+df = pd.read_csv(sys.stdin, dtype=object)
+
+col = sys.argv[1]
+c = df[col].value_counts()
+common_names = c[c > 1].index
+df2 = df[~df[col].isin(common_names) & ~df[col].isnull()]
+
+df2.to_csv(sys.stdout, index=False)

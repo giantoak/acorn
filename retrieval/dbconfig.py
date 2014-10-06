@@ -1,2 +1,2 @@
-dbname="acs_2013"
+dbname="acorn"
 user="sam"

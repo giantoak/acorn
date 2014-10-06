@@ -1,6 +1,18 @@
 import pandas as pd
 
+burn_list = ['city', 'CDP', 'town', 'township', 'village', 'borough', 'comunidad',
+        'UT', 'defined', 'urbana', 'plantation', 'Reservation', 'grant', '(balance)',
+        'municipality', 'purchase', 'location', 'gore', 'government', 'County',
+        'corporation', '157-30', 'City', '158-30', 'county']
+
 df = pd.read_csv('regions.csv')
+
+def strip_census_suffixes(loc):
+    """ remove all suffixes in a loc string, such that a place like
+    Indianapolis City (balance) becomes Indianapolis
+    """
+
+    parts = loc.split(',')
 
 df2 = df.copy()
 

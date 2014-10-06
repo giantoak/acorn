@@ -52,7 +52,7 @@ if __name__ == '__main__':
 
     os.chdir(path)
 
-    df = pd.read_csv('crime_scrape2013.csv')
+    df = pd.read_csv(sys.argv[1])
     p = PrecinctExtractor()
     names = []
     for a in df.Agency:

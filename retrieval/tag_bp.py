@@ -27,12 +27,12 @@ for i, row in df2.iterrows():
             placefp), file=sys.stderr)
         continue
     
-    result = {'place': row['url'][1:]}
+    result = {'place': row['url'][1:],
+            'gid': geo_id}
     acs_data = a.retrieve(geo_id, qs)
     acs_data.update(result)
-
     results.append(acs_data)
-
+    
 df_out = pd.DataFrame(results)
 df_out.to_csv(sys.stdout, index=False)
 
