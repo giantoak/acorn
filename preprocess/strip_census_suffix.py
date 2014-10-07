@@ -18,7 +18,7 @@ def remove_census_suffixes(loc):
         if parts[i] not in burn_list:
             break
 
-    name = ' '.join(parts[:i])
+    name = ' '.join(parts[:i+1])
 
     return name
 

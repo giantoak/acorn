@@ -5,9 +5,17 @@ import pandas as pd
 
 df = pd.read_csv(sys.stdin, dtype=object)
 a = Acorn()
+try:
+    arg = sys.argv[1:]
+except IndexError:
+    print('Error: argument required.', file=sys.stderr)
+    sys.exit()
 
 for i, row in df.iterrows():
-    name = row[sys.argv[1]]
+    if len(arg) == 1:
+        name = row[arg]
+    elif len(arg) > 1:
+        name = reduce(lambda x, y: x + ', '+ y, row[arg])
     try:
         r = a.resolve(name)
         df.loc[i, 'gid'] = r['geoid']

@@ -9,6 +9,19 @@ path = os.path.dirname(
 sys.path.append(os.path.join(path, 'preprocess'))
 
 from fipser import Fipser
+from strip_census_suffix import remove_census_suffixes
+
+def test_census_suffix():
+    def run_test(loc, ans):
+        r = remove_census_suffixes(loc)
+        assert r == ans
+
+    fixtures = (
+            ['Philadelphia city', 'Philadelphia'],
+            ['San Diego County', 'San Diego']
+            )
+    for loc, result in fixtures:
+        yield run_test, loc, result
 
 def test_get():
     fipser = Fipser()
@@ -22,7 +35,9 @@ def test_get():
             ['state', 'xxhaberdash', None, None],
             ['county', 'xxhaberdash', None, None],
             ['place', 'xxhaberdash', None, None],
-            ['place', 'abbeville', '01', '00124']
+            ['place', 'abbeville', '01', '00124'],
+            ['place', 'philadelphia', '42', '60000'],
+            ['county', 'philadelphia', '42', '101']
             )
 
     for cat, name, pre, result in fixtures:
@@ -33,7 +48,7 @@ def test_fips():
     def run_fips(f, loc, ans):
         r = f.resolve(loc)
         assert r == ans
-   fipser = Fipser()
+    fipser = Fipser()
     fixtures = {
             # city state no punctuation
             'Alexandria VA': {
