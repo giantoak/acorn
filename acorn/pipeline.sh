@@ -20,7 +20,7 @@ csvjoin -c state data/fips_states_lower.csv data/states_lower.csv \
 # PLACENAME which is wrong. So it is done correctly here:
 cat data/fips_place.csv \
 	| csvcut -e iso-8859-2 -C NAME,SUFFIX \
-	| python preprocess/strip_census_suffix.py PLACENAME NAME\
+	| python preprocess/strip_census_suffix.py PLACENAME NAME ',' \
 	> data/fips_place_name.csv
 
 #cat data/fips_county2.csv | pit '_.lower()' > data/fips_county3.csv
@@ -63,8 +63,7 @@ cat data/acs_col_seq_metadata.csv \
 # insert tables into the database
 # TODO: make the postgres credentials not hardcoded
 
-psql -U sam acorn -c "DROP TABLE IF EXISTS mappings.*"
-psql -U sam acorn -c "DROP SCHEMA IF EXISTS mappings"
+psql -U sam acorn -c "DROP SCHEMA IF EXISTS mappings CASCADE"
 psql -U sam acorn -c "CREATE SCHEMA IF NOT EXISTS mappings"
 csvsql --db postgresql:///acorn \
 	--db-schema mappings \

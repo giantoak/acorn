@@ -1,2 +1,0 @@
-dbname="acorn"
-user="sam"

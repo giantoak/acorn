@@ -16,10 +16,26 @@ class FIPSCountyReshaper(object):
         Outputs into the other
         """
         df = pd.read_csv(f, dtype=object)
-        df2 = self.transform(df)
+        df2 = self.transform_county(df)
         df2.to_csv(out, index=False)
+    
+    def transform_county(self, df):
+        def get_name(s):
+            x = s.split()
+            if x[-1].lower() in self.valid_suffixes:
+                return ' '.join(x[:-1])
 
-    def transform(self, df):
+        def get_suffix(s):
+            x = s.split()
+            if x[-1].lower() in self.valid_suffixes:
+                return x[-1]
+        df['county_name'] = df['county'].apply(get_name).str.lower()
+        df['county_suffix'] = df['county'].apply(get_suffix).str.lower()
+
+        df['county'] = df['county'].str.lower()
+        return df
+
+    def transform_all(self, df):
         def get_name(s):
             x = s.split()
             if x[-1].lower() in self.valid_suffixes:

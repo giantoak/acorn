@@ -4,6 +4,22 @@ import sys
 import os
 import re
 
+import psycopg2
+from psycopg2 import InternalError, ProgrammingError
+
+
+sys.path.append(os.path.dirname(
+    os.path.dirname(
+        os.path.abspath(__file__))))
+try:
+    from dbconfig import dbname, user
+except ImportError:
+    raise Exception('Need a file called dbconfig.py in same directory as this \
+            file, that define the postgres connection variables "dbname" and \
+            "user"')
+
+
+
 class Fipser(object):
     """
     A converter from ambiguous place names to FIPS codes.

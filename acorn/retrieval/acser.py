@@ -8,6 +8,11 @@ import numpy as np
 import psycopg2
 from psycopg2 import InternalError, ProgrammingError
 from collections import defaultdict
+
+sys.path.append(os.path.dirname(
+    os.path.dirname(
+        os.path.abspath(__file__))))
+
 try:
     from dbconfig import dbname, user
 except ImportError:

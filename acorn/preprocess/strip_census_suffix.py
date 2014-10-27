@@ -22,11 +22,11 @@ def remove_census_suffixes(loc):
 
     return name
 
-def clean_fips(col, outcol):
+def clean_fips(col, outcol, sep=','):
     # clean fips place
-    df_place = pd.read_csv(sys.stdin)
+    df_place = pd.read_csv(sys.stdin, sep=sep)
     df_place[outcol] = df_place[col].apply(remove_census_suffixes)
     df_place.to_csv(sys.stdout, index=False)
 
 if __name__ == '__main__':
-    clean_fips(sys.argv[1], sys.argv[2])
+    clean_fips(sys.argv[1], sys.argv[2], sys.argv[3])

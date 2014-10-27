@@ -1,0 +1,16 @@
+#! /usr/bin/python
+
+"""
+changes delimiter of csv files on the command line
+
+loads whole csv file into memory,
+so obviously very inefficient
+
+usage: cat x.csv | csvresep <original delimiter> <new delimiter>
+"""
+
+import pandas as pd
+import sys
+
+df = pd.read_csv(sys.stdin, sep=sys.argv[1].strip())
+df.to_csv(sys.stdout, index=False, sep=sys.argv[2].strip())
