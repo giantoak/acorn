@@ -21,7 +21,9 @@ class Fipser(object):
 
         # to speed up retrieval, we create separate dataframes
         # for each column that we need indexed
-
+        
+        # TODO: replace this with database accesses
+        # TODO: use gazetteer data
         self.county = pd.read_csv(os.path.join(datadir, 'fips_county_final.csv'), 
                 index_col='county_name', dtype=object)
         self.county_full_name_idx = self.county.copy()
