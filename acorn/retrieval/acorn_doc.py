@@ -13,7 +13,7 @@ except IndexError:
 
 for i, row in df.iterrows():
     if len(arg) == 1:
-        name = row[arg]
+        name = row[arg[0]]
     elif len(arg) > 1:
         name = reduce(lambda x, y: x + ', '+ y, row[arg])
     try:

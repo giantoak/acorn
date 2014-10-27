@@ -48,7 +48,7 @@ class Fipser(object):
         def filt_func(s):
             # filter empty strings and commas
             return len(s.strip()) and s.strip() != ','
-
+        
         parts_raw = re.split(r'([^, ]+)', location.lower())
         parts = [x.strip() for x in filter(filt_func, parts_raw)]
 
