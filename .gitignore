@@ -1,4 +1,4 @@
 *.pyc
 *.swp
-dbconfig.py
-
+acorn/dbconfig.py
+acorn/mysql_pipeline/mysqlconfig.sh

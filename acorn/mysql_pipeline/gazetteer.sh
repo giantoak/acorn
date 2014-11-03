@@ -1,6 +1,7 @@
 #!/bin/bash
-# an end-to-end pipeline for loading census gazeteer data into a postgres database
+# an end-to-end pipeline for loading census gazetteer data into a mysql database
 
+source mysql_pipeline/mysqlconfig.sh
 
 # convert census gazetteer file into proper shape
 cat data/2014_Gaz_place_national.txt \
@@ -39,16 +40,23 @@ csvjoin -e iso-8859-2 \
     | utils/csvrename fips:statefp \
     > data/gaz_county.csv
 
-psql -U sam acorn -c "DROP SCHEMA IF EXISTS gaz CASCADE"
-psql -U sam acorn -c "CREATE SCHEMA IF NOT EXISTS gaz"
+echo $dburl
 
-csvsql --db postgresql:///acorn \
-    --db-schema gaz \
-    --table places \
+csvsql --db $dburl \
+    --query "DROP DATABASE IF EXISTS census; CREATE DATABASE IF NOT EXISTS census"
+
+csvsql --db $dburl \
+    --db-schema census\
+    --table gaz_places \
     --insert data/gaz_place.csv
 
-csvsql --db postgresql:///acorn \
-    --db-schema gaz \
-    --table counties \
+csvsql --db $dburl \
+    --db-schema census \
+    --table gaz_counties \
     --insert data/gaz_county.csv
+
+
+
+
+
 
