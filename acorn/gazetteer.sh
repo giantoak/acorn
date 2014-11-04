@@ -42,7 +42,7 @@ csvjoin -e iso-8859-2 \
 psql -U sam acorn -c "DROP SCHEMA IF EXISTS gaz CASCADE"
 psql -U sam acorn -c "CREATE SCHEMA IF NOT EXISTS gaz"
 
-csvsql --db postgresql:///acorn \
+csvsql -y 2048 --db postgresql:///acorn \
     --db-schema gaz \
     --table places \
     --insert data/gaz_place.csv

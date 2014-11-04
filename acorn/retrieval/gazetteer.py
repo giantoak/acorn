@@ -9,6 +9,7 @@ import sqlalchemy
 from sqlalchemy.orm import scoped_session, sessionmaker
 import urllib
 from collections import defaultdict
+import grequests
 
 sys.path.append(os.path.dirname(
     os.path.dirname(
@@ -20,12 +21,13 @@ try:
 except ImportError:
     raise Exception('Need a file called dbconfig.py in same directory as this \
             file, that defines connection url `dburl`')
+
 class Gazetteer(object):
     """
     A converter from ambiguous place names to FIPS codes.
     """
-    gaz_natl = 'acs2012_3yr'
-    acs1 = 'acs2013_1yr'
+    gaz_places = 'gaz.places'
+    gaz_counties = 'gaz.counties'
     census_reporter = 'http://api.censusreporter.org/1.0/geo/elasticsearch?'
 
     def __init__(self):
@@ -37,6 +39,10 @@ class Gazetteer(object):
 
         return
 
+    def resolve_many(self, names, verbose=False):
+        """asynchronously query Census Reporter API with all names"""
+        
+
     def resolve(self, name, sum_level=None, verbose=False):
         """Return ACS data for given columns
         at the given geo ID.
@@ -46,13 +52,20 @@ class Gazetteer(object):
         # check if lowercase name is in places db
         """
         lowername = name.lower()
-        q = self.s.execute('SELECT * FROM gaz.places WHERE placename=:name', 
-                {'name': lowername})
+        q = self.s.execute('SELECT * FROM :table WHERE placename=:name', 
+                {   'table': self.gaz_places,
+                    'name': lowername })
 
         n = q.first()
         if n:
+            ndict = {k:v for k,v in row.items()}
+            result = {
+                    'geoid': ndict['geoid'],
+                    'name': ndict['placename'],
+                    }
+            """
+
          # store results into results struct and return it
-        """
 
         # query census API
         params = {'q': name, 'size': 1}

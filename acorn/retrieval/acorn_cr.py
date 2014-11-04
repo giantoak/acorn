@@ -15,7 +15,7 @@ sys.path.extend([os.path.join(dirroot, 'retrieval'),
 
 from gazetteer import Gazetteer
 
-class Acorn(object):
+class AcornCR(object):
     def __init__(self):
         self.gazzer = Gazetteer()
    
@@ -37,7 +37,7 @@ def _get_args():
     return args
 
 def main():
-    ac = Acorn()
+    ac = AcornCR()
     args = _get_args()
     
     result = ac.resolve(args.place, args.sumlev)
